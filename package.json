@@ -6,6 +6,13 @@
   "type": "module",
   "bin": {
     "git-bump": "dist/bin/git-bump.js",
+    "git-confluence-page-search": "dist/bin/git-confluence-page-search.js",
+    "git-confluence-page-show": "dist/bin/git-confluence-page-show.js",
+    "git-confluence-page": "dist/bin/git-confluence-page.js",
+    "git-confluence-space-list": "dist/bin/git-confluence-space-list.js",
+    "git-confluence-space": "dist/bin/git-confluence-space.js",
+    "git-confluence-whoami": "dist/bin/git-confluence-whoami.js",
+    "git-confluence": "dist/bin/git-confluence.js",
     "git-jira-issue-list": "dist/bin/git-jira-issue-list.js",
     "git-jira-issue-show": "dist/bin/git-jira-issue-show.js",
     "git-jira-issue": "dist/bin/git-jira-issue.js",

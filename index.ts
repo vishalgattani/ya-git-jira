@@ -1,4 +1,5 @@
 export * from "./lib/json.ts"
+export * from "./lib/confluence"
 export * from "./lib/git.ts"
 export * from "./lib/gitlab"
 export * from "./lib/is_main.ts"

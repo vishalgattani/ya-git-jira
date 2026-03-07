@@ -8,6 +8,7 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import bump from './git-bump'
+import confluence from './git-confluence'
 import jira from './git-jira'
 import lab from './git-lab'
 const version = await getPackageVersion()
@@ -17,6 +18,7 @@ export function create(): Command {
     program
         .version(version)
         .addCommand(bump())
+        .addCommand(confluence())
         .addCommand(jira())
         .addCommand(lab())
         .action(() => {
