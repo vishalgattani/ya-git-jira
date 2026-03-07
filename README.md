@@ -21,28 +21,15 @@ npm install -g ya-git-jira   # or bun / yarn / pnpm
 
 ### Docker (alternative)
 
-Build the image once:
+No bun required — just Docker:
 
 ```
-docker build -t gitj .
+./install-docker-gitj.sh
 ```
 
-Then run any command by mounting your git config and current directory:
-
-```
-docker run --rm \
-  -v "$HOME/.gitconfig:/root/.gitconfig:ro" \
-  -v "$(pwd):$(pwd)" -w "$(pwd)" \
-  gitj <command> [args...]
-```
-
-For convenience, add a shell alias:
-
-```bash
-alias gitj='docker run --rm -v "$HOME/.gitconfig:/root/.gitconfig:ro" -v "$(pwd):$(pwd)" -w "$(pwd)" gitj'
-```
-
-Then use it exactly like the native install: `gitj jira start BUG-42`.
+This builds the Docker image and installs a `gitj` wrapper script into a bin
+directory on your PATH (e.g. `~/.local/bin`). Then use it like the native
+install: `gitj jira start BUG-42`.
 
 ## Configuration
 
