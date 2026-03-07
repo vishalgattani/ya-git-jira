@@ -102,11 +102,38 @@ If you need to start fresh on the same issue, `git bump` creates a new branch
 with an incremented version suffix (e.g., `PROJ-123-fix-the-bug.v1` ->
 `PROJ-123-fix-the-bug.v2`).
 
+## Arbitrary API Access
+
+For Jira API endpoints not covered by dedicated commands, use `git api`:
+
+```sh
+# GET request (default)
+git api jira /myself
+git api jira /issue/PROJ-123
+
+# POST, PUT, DELETE
+git api jira /issue -d '{"fields":{"project":{"key":"PROJ"},"summary":"New issue","issuetype":{"name":"Task"}}}'
+git api jira /issue/PROJ-123 -X PUT -d '{"fields":{"summary":"Updated title"}}'
+git api jira /issue/PROJ-123/transitions -d '{"transition":{"id":"31"}}'
+
+# Verbose: show HTTP status and response headers
+git api jira /myself -v
+
+# Full URL control (skip /rest/api/3 prefix)
+git api jira /rest/api/2/myself --raw
+```
+
+The `git api` command handles authentication (Basic auth with base64-encoded
+user:token) and the base URL (`/rest/api/3`) automatically. See `git api --help`
+for all options.
+
 ## Important Notes
 
 - **Issue keys** follow the pattern `PROJECT-NUMBER` (e.g., `EDS-456`, `DEVOPS-123`).
 - **The `issue list` command** uses JQL to find issues assigned to the current user
   that are unresolved.
+- **The dedicated commands are read-only** -- use `git api jira` for write operations
+  (creating issues, transitions, comments, etc.).
 - **All commands support `-v` / `--verbose`** for full API response output.
 - **The `start` command** only creates a local branch -- it does not push to a remote
   or transition the Jira issue status.

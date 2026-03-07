@@ -176,10 +176,36 @@ These use `projectScopedGet()` which resolves the project from the git remote:
 |---------|----------|
 | `merge train list` | `GET /api/v4/projects/{id}/merge_trains` |
 
+## Arbitrary API Access
+
+For GitLab API endpoints not covered by dedicated commands, use `git api`:
+
+```sh
+# GET request (default)
+git api gitlab /user
+git api gitlab /projects/123/merge_requests
+
+# POST, PUT, DELETE
+git api gitlab /projects/123/merge_requests/456/notes -d '{"body":"LGTM"}'
+git api gitlab /projects/123/merge_requests/456/approve -X POST
+
+# Paginated listing
+git api gitlab /projects --paginate
+
+# Verbose: show HTTP status and response headers
+git api gitlab /user -v
+
+# Full URL control (skip /api/v4 prefix)
+git api gitlab /api/v4/version --raw
+```
+
+The `git api` command handles authentication (Private-Token header) and the base URL
+(`/api/v4`) automatically. See `git api --help` for all options.
+
 ## Important Notes
 
-- **All commands are read-only** -- no projects, MRs, or pipelines are created or
-  modified.
+- **The dedicated commands are read-only** -- no projects, MRs, or pipelines are
+  created or modified. Use `git api gitlab` for write operations.
 - **Most commands support `-v` / `--verbose`** for full API response output.
   Exceptions: `namespace list` and `merge train list` always output full objects.
 - **Project-scoped commands** (`merge train list`, `project whereami`) require you

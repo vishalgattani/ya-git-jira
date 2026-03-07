@@ -8,6 +8,7 @@
 import { Command } from 'commander'
 import { formatCommandTree } from '../lib/help.ts'
 import { getPackageVersion } from '../lib/package'
+import api from './git-api'
 import bump from './git-bump'
 import confluence from './git-confluence'
 import jira from './git-jira'
@@ -19,6 +20,7 @@ export function create(): Command {
     program
         .version(version)
         .option('--help-all', 'Show full command tree')
+        .addCommand(api())
         .addCommand(bump())
         .addCommand(confluence())
         .addCommand(jira())

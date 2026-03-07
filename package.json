@@ -5,6 +5,7 @@
   "module": "dist/index.js",
   "type": "module",
   "bin": {
+    "git-api": "dist/bin/git-api.js",
     "git-bump": "dist/bin/git-bump.js",
     "git-confluence-page-search": "dist/bin/git-confluence-page-search.js",
     "git-confluence-page-show": "dist/bin/git-confluence-page-show.js",

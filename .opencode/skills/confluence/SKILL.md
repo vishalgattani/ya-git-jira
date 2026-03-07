@@ -157,6 +157,32 @@ Common macros: `code`, `info`, `note`, `warning`, `tip`, `expand`, `toc`,
 <ac:image><ri:url ri:value="https://example.com/image.png" /></ac:image>
 ```
 
+## Arbitrary API Access
+
+For Confluence API endpoints not covered by dedicated commands, use `git api`:
+
+```sh
+# GET request (default)
+git api confluence /spaces
+git api confluence /pages/12345
+
+# POST, PUT
+git api confluence /pages -d '{"spaceId":"123","title":"New Page","body":{"representation":"storage","value":"<p>content</p>"},"status":"current"}'
+
+# Paginated listing
+git api confluence /spaces --paginate
+
+# Confluence v1 API (skip /wiki/api/v2 prefix)
+git api confluence /wiki/rest/api/content/12345 --raw
+
+# Verbose: show HTTP status and response headers
+git api confluence /spaces -v
+```
+
+The `git api` command handles authentication (Basic auth with base64-encoded
+user:token) and the base URL (`/wiki/api/v2`) automatically. Use `--raw` with
+the full path for v1 API endpoints. See `git api --help` for all options.
+
 ## Important Notes
 
 - **Storage format must be valid**: malformed XHTML will cause the update to fail.
