@@ -50,7 +50,7 @@ export async function findProject(ssh_url: string): Promise<Project | undefined>
     return project
 }
 
-export async function projectScopedGet(endpoint: string): Promise<JSONValue> {
+async function projectScopedRequest(endpoint: string): Promise<Response> {
     if (endpoint.startsWith("/")) {
         console.warn(`gitlabApi: endpoint ${endpoint} starts with /, removing it`)
         endpoint = endpoint.slice(1)
@@ -64,15 +64,23 @@ export async function projectScopedGet(endpoint: string): Promise<JSONValue> {
     }
     const base = `https://${host}/api/v4/projects/${project.id}`
     const uri = `${base}/${endpoint}`
-    dlog(`projectScopedGet uri: ${uri}`)
+    dlog(`projectScopedRequest uri: ${uri}`)
     const headers = new Headers()
-    headers.append("Accept", "application/json")
     headers.append('Private-Token', token)
     const options = {
         method,
         headers,
     }
     const request = new Request(uri, options)
-    const response = await fetch(request)
+    return await fetch(request)
+}
+
+export async function projectScopedGet(endpoint: string): Promise<JSONValue> {
+    const response = await projectScopedRequest(endpoint)
     return await response.json()
+}
+
+export async function projectScopedGetText(endpoint: string): Promise<string> {
+    const response = await projectScopedRequest(endpoint)
+    return await response.text()
 }

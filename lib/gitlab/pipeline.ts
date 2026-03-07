@@ -2,6 +2,7 @@ import { dlog } from "./dlog"
 import { projectScopedGet } from "./project"
 import { whoami } from "./user"
 import { gitlabApi } from "./api"
+import { getCurrentBranch } from "../git"
 import type { JSONValue } from "../json"
 
 export type Pipeline = JSONValue & {
@@ -13,7 +14,7 @@ export type Pipeline = JSONValue & {
     updated_at: string  // datetime string like "2021-03-18T15:00:00.000Z"
 }
 
-export type PipelineStatus = 'success' | 'running'
+export type PipelineStatus = 'success' | 'running' | 'failed' | 'canceled' | 'pending' | 'created'
 
 export interface GetPipelineOptions {
     days: number
@@ -46,4 +47,13 @@ export async function getMergeRequestPipelines(
     return await gitlabApi(
         `projects/${project}/merge_requests/${mrIid}/pipelines`
     ) as Array<Pipeline>
+}
+
+export async function getLatestPipeline(): Promise<Pipeline | undefined> {
+    const ref = await getCurrentBranch()
+    dlog(`getLatestPipeline ref: ${ref}`)
+    const pipelines = await projectScopedGet(
+        `pipelines?ref=${encodeURIComponent(ref)}&per_page=1&order_by=id&sort=desc`
+    ) as Array<Pipeline>
+    return pipelines.length > 0 ? pipelines[0] : undefined
 }

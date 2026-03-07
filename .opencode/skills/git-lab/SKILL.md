@@ -34,9 +34,16 @@ git-lab
   |       `-- list              Merge trains for current project
   |-- namespace
   |   `-- list                  List namespaces
-  `-- projects
+  `-- project
       |-- list                  List projects (with optional filter)
-      `-- whereami              Identify project from current directory
+      |-- whereami              Identify project from current directory
+      |-- mr
+      |   `-- list              List MRs for a project/branch
+      `-- pipeline
+          |-- jobs              List jobs for a pipeline
+          |-- latest            Show jobs for the latest pipeline on current branch
+          |-- list              List recent pipelines
+          `-- log               Download a job's log output
 ```
 
 Also available at the top level:
@@ -119,6 +126,30 @@ Increments a version suffix on the current branch name:
 
 Creates and checks out the new branch locally.
 
+### Pipelines
+
+```sh
+# List recent pipelines (default: successful, last 7 days)
+git-lab project pipeline list
+git-lab project pipeline list --status failed --days 3
+git-lab project pipeline list -v   # Verbose: full pipeline objects
+
+# Show jobs for the latest pipeline on the current branch
+git-lab project pipeline latest
+git-lab project pipeline latest -v   # Verbose: full job objects
+
+# List jobs for a specific pipeline
+git-lab project pipeline jobs --pipeline 12345
+git-lab project pipeline jobs --pipeline 12345 -v
+
+# Download a job's log output (plain text to stdout)
+git-lab project pipeline log --job 67890
+git-lab project pipeline log --job 67890 --tail 200   # Last 200 lines only
+```
+
+All pipeline commands are project-scoped (require being in a git repo with an
+`origin` remote pointing to GitLab).
+
 ## Workflows
 
 ### Finding and Reviewing Merge Requests
@@ -153,6 +184,26 @@ git-lab merge train list
 This is project-scoped -- it uses `git ls-remote --get-url origin` to determine
 which GitLab project to query.
 
+### Debugging CI Pipeline Failures
+
+```sh
+# 1. Quick check: see jobs for latest pipeline on current branch
+git-lab project pipeline latest
+
+# 2. Or find failed pipelines first, then drill into one
+git-lab project pipeline list --status failed --days 3
+git-lab project pipeline jobs --pipeline 12345
+
+# 3. Download the log for a failed job
+git-lab project pipeline log --job 67890
+
+# 4. Show just the tail of a large log
+git-lab project pipeline log --job 67890 --tail 200
+```
+
+The `log` command outputs raw plain text to stdout, making it suitable for piping
+to other tools or for AI agent consumption when diagnosing failures.
+
 ## API Details
 
 ### Global Endpoints (paginated)
@@ -170,11 +221,15 @@ These use `gitlabApi()` which auto-paginates via `Link` headers (100 per page):
 
 ### Project-Scoped Endpoints (not paginated)
 
-These use `projectScopedGet()` which resolves the project from the git remote:
+These use `projectScopedGet()` / `projectScopedGetText()` which resolve the project from the git remote:
 
 | Command | Endpoint |
 |---------|----------|
 | `merge train list` | `GET /api/v4/projects/{id}/merge_trains` |
+| `pipeline list` | `GET /api/v4/projects/{id}/pipelines?status=...&username=...&updated_after=...` |
+| `pipeline latest` | `GET /api/v4/projects/{id}/pipelines?ref=...&per_page=1&order_by=id&sort=desc` |
+| `pipeline jobs` | `GET /api/v4/projects/{id}/pipelines/{pid}/jobs` |
+| `pipeline log` | `GET /api/v4/projects/{id}/jobs/{jid}/trace` (returns plain text) |
 
 ## Arbitrary API Access
 
@@ -214,5 +269,5 @@ The `git-api` command handles authentication (Private-Token header) and the base
   client-side path substring filtering for accuracy.
 - **`gitlab.host` defaults to `gitlab.com`** if not set in git config, unlike
   `jira.host` which is required.
-- **Pipeline commands exist** (`git-lab-project-pipeline-list`) but are not currently
-  wired into the command tree.
+- **Pipeline and job commands** (`pipeline list`, `pipeline latest`, `pipeline jobs`,
+  `pipeline log`) are project-scoped and require an `origin` remote pointing to GitLab.

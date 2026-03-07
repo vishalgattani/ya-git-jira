@@ -1,6 +1,7 @@
 export * from './api'
 export * from './config'
 export * from './group'
+export * from './job'
 export * from './merge-request'
 export * from './namespace'
 export * from './pipeline'
