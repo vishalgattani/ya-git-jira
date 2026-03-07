@@ -5,19 +5,38 @@ executable that `git` discovers automatically (e.g. `git jira start`, `git lab
 merge active`, `git confluence page search`). A unified `gitj` wrapper is also
 provided.
 
-## Requirements
-
-[Bun](https://bun.sh) (not Node.js):
-
-```
-curl -fsSL https://bun.sh/install | bash
-```
-
 ## Install
 
+There are three ways to install. Options 1 and 2 require
+[Bun](https://bun.sh). Option 3 requires only Docker.
+
+### Option 1: npm install (requires Bun)
+
 ```
-npm install -g ya-git-jira   # or bun / yarn / pnpm
+curl -fsSL https://bun.sh/install | bash   # install Bun first
+npm install -g ya-git-jira                  # or bun / yarn / pnpm
 ```
+
+### Option 2: Clone and build (requires Bun)
+
+```
+git clone https://github.com/jimlloyd/ya-git-jira.git
+cd ya-git-jira
+bun install
+bun link
+```
+
+### Option 3: Clone and Docker (no Bun needed)
+
+```
+git clone https://github.com/jimlloyd/ya-git-jira.git
+cd ya-git-jira
+./install-docker-gitj.sh
+```
+
+This builds a Docker image and installs a `gitj` wrapper script into a bin
+directory on your PATH (e.g. `~/.local/bin`). The wrapper transparently runs
+commands inside Docker, so usage is identical to a native install.
 
 ## Configuration
 
@@ -142,16 +161,16 @@ one-off queries and scripting.
 ### gitj install-skills
 
 ```
-gitj install-skills opencode       # symlinks to ~/.config/opencode/skills/
-gitj install-skills copilot        # symlinks to ~/.copilot/skills/
-gitj install-skills claude         # symlinks to .claude/skills/ (project-level)
-gitj install-skills opencode --copy   # copy instead of symlink
+gitj install-skills opencode       # copies to .opencode/skills/
+gitj install-skills copilot        # copies to .github/skills/
+gitj install-skills claude         # copies to .claude/skills/
 gitj install-skills opencode --force  # overwrite existing directories
 ```
 
-Installs AI agent skill files (`git-jira`, `git-lab`, `git-confluence`) so that
-coding assistants (OpenCode, GitHub Copilot, Claude Code) know how to use these
-tools.
+Skills are installed into the current project directory. Run this from your
+project root so that your AI coding assistant discovers the skill files. When
+running via Docker, files are always copied (symlinks would point into the
+container).
 
 ## AI agent skills
 

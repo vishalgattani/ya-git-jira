@@ -6,7 +6,6 @@ import { findPackageJson } from '../lib/package'
 import { isMain } from '../lib/is_main'
 import fs from 'node:fs'
 import path from 'node:path'
-import os from 'node:os'
 
 const version = await getPackageVersion()
 
@@ -29,14 +28,14 @@ function getSkillsSourceDir(): string {
 }
 
 function getTargetDir(framework: Framework): string {
-    const home = os.homedir()
+    const cwd = process.cwd()
     switch (framework) {
         case 'opencode':
-            return path.join(home, '.config', 'opencode', 'skills')
+            return path.join(cwd, '.opencode', 'skills')
         case 'copilot':
-            return path.join(home, '.copilot', 'skills')
+            return path.join(cwd, '.github', 'skills')
         case 'claude':
-            return path.join(process.cwd(), '.claude', 'skills')
+            return path.join(cwd, '.claude', 'skills')
     }
 }
 
@@ -101,7 +100,7 @@ export function create(): Command {
         .name('install-skills')
         .description('Install AI agent skills for a coding framework')
         .argument('<framework>', `framework to install for (${frameworks.join(', ')})`)
-        .option('--copy', 'copy files instead of creating symlinks')
+        .option('--copy', 'copy files instead of creating symlinks (automatic in Docker)')
         .option('--force', 'overwrite existing skill directories')
         .action(async (framework: string, options: { copy?: boolean; force?: boolean }) => {
             if (!frameworks.includes(framework as Framework)) {
@@ -110,10 +109,16 @@ export function create(): Command {
                 process.exit(1)
             }
 
+            // When running in Docker, source files live inside the container
+            // so symlinks would be broken on the host. Force copy mode.
+            const sourceDir = getSkillsSourceDir()
+            const inDocker = sourceDir.startsWith('/app/')
+            const copy = !!(options.copy || inDocker)
+
             if (options.force) {
-                forceInstallSkills(framework as Framework, !!options.copy)
+                forceInstallSkills(framework as Framework, copy)
             } else {
-                installSkills(framework as Framework, !!options.copy)
+                installSkills(framework as Framework, copy)
             }
         })
     return program

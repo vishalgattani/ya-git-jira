@@ -5,7 +5,7 @@ description: Using git-confluence commands to search, read, and update Confluenc
 
 ## Overview
 
-`git-confluence` interacts with Confluence Cloud via its REST API v2.
+`gitj confluence` interacts with Confluence Cloud via its REST API v2.
 Authentication uses git config values with fallback to `jira.*` equivalents:
 
 ```sh
@@ -17,11 +17,11 @@ git config --global confluence.token your-api-token            # falls back to j
 ## Commands
 
 ```
-git-confluence whoami              Show current authenticated user
-git-confluence space list          List all spaces
-git-confluence page search <q>     Search pages (fuzzy title, --exact, or --full-text)
-git-confluence page show <id>      Show page metadata (add --body-format for content)
-git-confluence page update <id>    Update page content (from stdin or --file)
+gitj confluence whoami              Show current authenticated user
+gitj confluence space list          List all spaces
+gitj confluence page search <q>     Search pages (fuzzy title, --exact, or --full-text)
+gitj confluence page show <id>      Show page metadata (add --body-format for content)
+gitj confluence page update <id>    Update page content (from stdin or --file)
 ```
 
 Use `--help` on any command for options.
@@ -41,42 +41,42 @@ Use `--help` on any command for options.
 
 ```sh
 # 1. Find the page
-git-confluence page search "My Page Title"
+gitj confluence page search "My Page Title"
 
 # 2. Read content (outputs raw storage-format XHTML)
-git-confluence page show <id> --body-format storage --body-only > page.html
+gitj confluence page show <id> --body-format storage --body-only > page.html
 
 # 3. Edit page.html as needed (must remain valid storage format)
 
 # 4. Push the update
-git-confluence page update <id> --file page.html --message "Updated content"
+gitj confluence page update <id> --file page.html --message "Updated content"
 ```
 
 Content can also be piped via stdin:
 
 ```sh
-cat page.html | git-confluence page update <id>
+cat page.html | gitj confluence page update <id>
 ```
 
 ## Arbitrary Confluence API Access
 
-For operations not covered by the dedicated commands, use `git-api confluence`:
+For operations not covered by the dedicated commands, use `gitj api confluence`:
 
 ```sh
 # GET (default) -- path is relative to /wiki/api/v2
-git-api confluence /spaces
-git-api confluence /pages/12345
+gitj api confluence /spaces
+gitj api confluence /pages/12345
 
 # POST (auto-promoted when --data is provided)
-git-api confluence /pages -d '{"spaceId":"123","title":"New Page","body":{"representation":"storage","value":"<p>content</p>"},"status":"current"}'
+gitj api confluence /pages -d '{"spaceId":"123","title":"New Page","body":{"representation":"storage","value":"<p>content</p>"},"status":"current"}'
 
 # Paginated listing
-git-api confluence /spaces --paginate
+gitj api confluence /spaces --paginate
 
 # Skip /wiki/api/v2 prefix for v1 API access
-git-api confluence /wiki/rest/api/content/12345 --raw
+gitj api confluence /wiki/rest/api/content/12345 --raw
 ```
 
-`git-api` handles authentication and base URL automatically. It also supports
+`gitj api` handles authentication and base URL automatically. It also supports
 `-v` (status/headers to stderr), and exits with code 1 on HTTP 4xx/5xx.
-Run `git-api -h` for all options.
+Run `gitj api -h` for all options.
