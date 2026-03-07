@@ -7,7 +7,7 @@ provided.
 
 ## Requirements
 
-[Bun](https://bun.sh) (not Node.js):
+[Bun](https://bun.sh) (not Node.js) — or Docker if you prefer not to install Bun.
 
 ```
 curl -fsSL https://bun.sh/install | bash
@@ -18,6 +18,31 @@ curl -fsSL https://bun.sh/install | bash
 ```
 npm install -g ya-git-jira   # or bun / yarn / pnpm
 ```
+
+### Docker (alternative)
+
+Build the image once:
+
+```
+docker build -t gitj .
+```
+
+Then run any command by mounting your git config and current directory:
+
+```
+docker run --rm \
+  -v "$HOME/.gitconfig:/root/.gitconfig:ro" \
+  -v "$(pwd):$(pwd)" -w "$(pwd)" \
+  gitj <command> [args...]
+```
+
+For convenience, add a shell alias:
+
+```bash
+alias gitj='docker run --rm -v "$HOME/.gitconfig:/root/.gitconfig:ro" -v "$(pwd):$(pwd)" -w "$(pwd)" gitj'
+```
+
+Then use it exactly like the native install: `gitj jira start BUG-42`.
 
 ## Configuration
 
