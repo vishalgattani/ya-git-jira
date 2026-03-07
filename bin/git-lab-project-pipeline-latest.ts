@@ -21,20 +21,20 @@ export function create(): Command {
                 process.exit(1)
             }
             const { id, status, ref, web_url } = pipeline
-            console.log({ id, status, ref, web_url })
+            console.log(JSON.stringify({ id, status, ref, web_url }, null, 2))
             const jobs: Array<Job> = await getPipelineJobs(pipeline.id)
             if (!jobs || jobs.length === 0) {
                 console.error(`No jobs found for pipeline ${pipeline.id}`)
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(jobs)
+                console.log(JSON.stringify(jobs, null, 2))
             } else {
                 const filtered = jobs.map((j: Job) => {
                     const { id, name, stage, status, duration, failure_reason } = j
                     return { id, name, stage, status, duration, failure_reason }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

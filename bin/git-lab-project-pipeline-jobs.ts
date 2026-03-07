@@ -27,13 +27,13 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(jobs)
+                console.log(JSON.stringify(jobs, null, 2))
             } else {
                 const filtered = jobs.map((j: Job) => {
                     const { id, name, stage, status, duration, failure_reason } = j
                     return { id, name, stage, status, duration, failure_reason }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

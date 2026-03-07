@@ -63,7 +63,8 @@ async function projectScopedRequest(endpoint: string): Promise<Response> {
         throw new Error(`Could not find project for remote ${remote}`)
     }
     const base = `https://${host}/api/v4/projects/${project.id}`
-    const uri = `${base}/${endpoint}`
+    const sep = endpoint.includes('?') ? '&' : '?'
+    const uri = `${base}/${endpoint}${sep}per_page=100`
     dlog(`projectScopedRequest uri: ${uri}`)
     const headers = new Headers()
     headers.append('Private-Token', token)
