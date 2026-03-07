@@ -36,8 +36,10 @@ export async function confluenceApi(endpoint: string): Promise<JSONValue> {
         return body
     }
     let result: Array<JSONValue> = body.results
+    const origin = `https://${host}`
     while (link) {
-        let request = new Request(link, options)
+        const url = link.startsWith('/') ? `${origin}${link}` : link
+        let request = new Request(url, options)
         const next_response = await fetch(request)
         link = getNextLink(next_response.headers.get('Link'))
         const next_body = await next_response.json() as JSONValue & { results?: Array<JSONValue> }
