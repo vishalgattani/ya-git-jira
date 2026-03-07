@@ -5,193 +5,78 @@ description: Using git-confluence commands to search, read, and update Confluenc
 
 ## Overview
 
-The `git-confluence` CLI provides commands for interacting with Confluence Cloud via
-its REST API v2. Authentication uses git config values (`confluence.host`,
-`confluence.token`, etc.) with fallback to `jira.*` config values.
-
-## Command Reference
-
-### Authentication
+`git-confluence` interacts with Confluence Cloud via its REST API v2.
+Authentication uses git config values with fallback to `jira.*` equivalents:
 
 ```sh
-git-confluence whoami          # Show current authenticated user
+git config --global confluence.host yourcompany.atlassian.net  # falls back to jira.host
+git config --global confluence.user you@company.com            # falls back to jira.user, then user.email
+git config --global confluence.token your-api-token            # falls back to jira.token
 ```
 
-### Spaces
+## Commands
 
-```sh
-git-confluence space list      # List all spaces (key, name)
-git-confluence space list -v   # Verbose: full API response
+```
+git-confluence whoami              Show current authenticated user
+git-confluence space list          List all spaces
+git-confluence page search <q>     Search pages (fuzzy title, --exact, or --full-text)
+git-confluence page show <id>      Show page metadata (add --body-format for content)
+git-confluence page update <id>    Update page content (from stdin or --file)
 ```
 
-### Pages
+Use `--help` on any command for options.
 
-```sh
-# Search for pages by title (fuzzy match, default)
-git-confluence page search "query"
-# Output: id<TAB>title<TAB>url (one per line)
+## Key Behaviors
 
-# Search with exact title match (uses v2 API)
-git-confluence page search "Exact Page Title" --exact
-
-# Full-text search (searches page body content too)
-git-confluence page search "query" --full-text
-
-# Show page metadata
-git-confluence page show <id>
-# Output: { id, title, spaceId, url }
-
-# Show page metadata including body content
-git-confluence page show <id> --body-format storage
-# Output: { id, title, spaceId, url, bodyLength }
-
-# Show page with full API response (includes body if --body-format set)
-git-confluence page show <id> --body-format storage -v
-
-# Output ONLY the body content (for piping)
-git-confluence page show <id> --body-format storage --body-only
-
-# Update a page (reads new content from stdin)
-echo "<p>New content</p>" | git-confluence page update <id>
-
-# Update from a file
-git-confluence page update <id> --file content.html
-
-# Update with a new title and version message
-git-confluence page update <id> --title "New Title" --message "Updated via CLI"
-```
+- **`--body-format`** accepts `storage` (XHTML) or `atlas_doc_format` (ADF JSON).
+  `--body-only` requires `--body-format` to be set.
+- **`page update`** always writes in `storage` representation, regardless of how
+  the content was read. It auto-fetches the current version and increments it.
+- **Page IDs are numeric strings** (e.g., `"36306946"`).
+- Page content uses Confluence storage format (XHTML with `ac:*`/`ri:*` namespaced
+  elements for macros, links, and images). Reference:
+  https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html
 
 ## Workflow: Read, Revise, and Update a Page
 
-### Step 1: Find the page
-
 ```sh
+# 1. Find the page
 git-confluence page search "My Page Title"
-```
 
-This returns the page ID, title, and URL. Note the page ID for subsequent commands.
-
-### Step 2: Read the page content
-
-```sh
-git-confluence page show <id> --body-format storage --body-only
-```
-
-This outputs the raw Confluence storage format (XHTML-like markup). To save to a file:
-
-```sh
+# 2. Read content (outputs raw storage-format XHTML)
 git-confluence page show <id> --body-format storage --body-only > page.html
-```
 
-### Step 3: Modify the content
+# 3. Edit page.html as needed (must remain valid storage format)
 
-Edit the storage-format content as needed. The content must remain valid Confluence
-storage format (see format reference below).
-
-### Step 4: Update the page
-
-```sh
+# 4. Push the update
 git-confluence page update <id> --file page.html --message "Updated content"
 ```
 
-Or pipe content directly:
+Content can also be piped via stdin:
 
 ```sh
 cat page.html | git-confluence page update <id>
 ```
 
-The update command automatically:
-- Fetches the current page to get the title and version number
-- Increments the version number
-- PUTs the update to the Confluence API
+## Arbitrary Confluence API Access
 
-## Confluence Storage Format
-
-Page content uses Confluence storage format, which is XHTML-like markup. Key elements:
-
-### Common Tags
-
-| Tag | Purpose | Example |
-|-----|---------|---------|
-| `<p>` | Paragraph | `<p>Text here</p>` |
-| `<h1>`..`<h6>` | Headings | `<h2>Section</h2>` |
-| `<strong>` | Bold | `<strong>bold</strong>` |
-| `<em>` | Italic | `<em>italic</em>` |
-| `<a href="...">` | Link | `<a href="https://example.com">link</a>` |
-| `<ul>`, `<ol>`, `<li>` | Lists | `<ul><li>item</li></ul>` |
-| `<table>`, `<tr>`, `<td>`, `<th>` | Tables | Standard HTML table markup |
-| `<br />` | Line break | Self-closing |
-| `<hr />` | Horizontal rule | Self-closing |
-
-### Confluence-Specific Macros
-
-Macros use the `<ac:structured-macro>` element with `<ac:parameter>` children:
-
-```xml
-<ac:structured-macro ac:name="code">
-  <ac:parameter ac:name="language">python</ac:parameter>
-  <ac:plain-text-body><![CDATA[print("hello")]]></ac:plain-text-body>
-</ac:structured-macro>
-```
-
-Common macros: `code`, `info`, `note`, `warning`, `tip`, `expand`, `toc`,
-`children`, `include`, `excerpt`.
-
-### Rich Links and Mentions
-
-```xml
-<!-- Link to another Confluence page -->
-<ac:link><ri:page ri:content-title="Other Page" /></ac:link>
-
-<!-- User mention -->
-<ac:link><ri:user ri:account-id="abc123" /></ac:link>
-```
-
-### Images and Attachments
-
-```xml
-<!-- Inline attached image -->
-<ac:image><ri:attachment ri:filename="screenshot.png" /></ac:image>
-
-<!-- External image -->
-<ac:image><ri:url ri:value="https://example.com/image.png" /></ac:image>
-```
-
-## Arbitrary API Access
-
-For Confluence API endpoints not covered by dedicated commands, use `git-api`:
+For operations not covered by the dedicated commands, use `git-api confluence`:
 
 ```sh
-# GET request (default)
+# GET (default) -- path is relative to /wiki/api/v2
 git-api confluence /spaces
 git-api confluence /pages/12345
 
-# POST, PUT
+# POST (auto-promoted when --data is provided)
 git-api confluence /pages -d '{"spaceId":"123","title":"New Page","body":{"representation":"storage","value":"<p>content</p>"},"status":"current"}'
 
 # Paginated listing
 git-api confluence /spaces --paginate
 
-# Confluence v1 API (skip /wiki/api/v2 prefix)
+# Skip /wiki/api/v2 prefix for v1 API access
 git-api confluence /wiki/rest/api/content/12345 --raw
-
-# Verbose: show HTTP status and response headers
-git-api confluence /spaces -v
 ```
 
-The `git-api` command handles authentication (Basic auth with base64-encoded
-user:token) and the base URL (`/wiki/api/v2`) automatically. Use `--raw` with
-the full path for v1 API endpoints. See `git-api -h` for all options.
-
-## Important Notes
-
-- **Storage format must be valid**: malformed XHTML will cause the update to fail.
-  When editing, preserve the structure of macro elements (`ac:*`, `ri:*` namespaces).
-- **Version conflicts**: the update command auto-increments the version number.
-  If another user updates the page between your read and write, the update will fail
-  with a version conflict. Re-read and retry in that case.
-- **Search is fuzzy by default**: uses CQL `title ~ "query"` via the v1 search API.
-  Use `--exact` for exact title matching via the v2 pages API.
-  Use `--full-text` to also search page body content (`text ~ "query"`).
-- **All commands support `-v` / `--verbose`** for full API response output.
-- **Page IDs are numeric strings** (e.g., `"36306946"`).
+`git-api` handles authentication and base URL automatically. It also supports
+`-v` (status/headers to stderr), and exits with code 1 on HTTP 4xx/5xx.
+Run `git-api -h` for all options.
