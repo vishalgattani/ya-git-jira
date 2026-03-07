@@ -3,27 +3,22 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { isMain } from '../lib/is_main'
-import start from './git-jira-start'
-import issue from './git-jira-issue'
-import issues from './git-jira-issue-list'
-import whoami from './git-jira-whoami'
+import list from './git-confluence-space-list'
 const version = await getPackageVersion()
 
 export function create(): Command {
     const program: Command = new Command()
     program
         .version(version)
-        .name('jira')
-        .description('Commands for working with Jira')
-        .addCommand(start())
-        .addCommand(issue())
-        .addCommand(issues())
-        .addCommand(whoami())
+        .name('space')
+        .description('Commands for working with Confluence spaces')
+        .addCommand(list())
+        .action(() => program.help())
     return program
 }
 
 export default create
 
-if (isMain('git-jira')) {
+if (isMain('git-confluence-space')) {
     await create().parseAsync(Bun.argv)
 }

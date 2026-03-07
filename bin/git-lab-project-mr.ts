@@ -3,27 +3,22 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { isMain } from '../lib/is_main'
-import start from './git-jira-start'
-import issue from './git-jira-issue'
-import issues from './git-jira-issue-list'
-import whoami from './git-jira-whoami'
+import list from './git-lab-project-mr-list'
 const version = await getPackageVersion()
 
 export function create(): Command {
     const program: Command = new Command()
     program
         .version(version)
-        .name('jira')
-        .description('Commands for working with Jira')
-        .addCommand(start())
-        .addCommand(issue())
-        .addCommand(issues())
-        .addCommand(whoami())
+        .name('mr')
+        .description('Commands for working with merge requests')
+        .addCommand(list())
+        .action(() => program.help())
     return program
 }
 
 export default create
 
-if (isMain('git-jira')) {
+if (isMain('git-lab-project-mr')) {
     await create().parseAsync(Bun.argv)
 }
