@@ -6,6 +6,7 @@
 // from the command line and then call the appropriate subcommand.
 
 import { Command } from 'commander'
+import { formatCommandTree } from '../lib/help.ts'
 import { getPackageVersion } from '../lib/package'
 import bump from './git-bump'
 import confluence from './git-confluence'
@@ -17,11 +18,16 @@ export function create(): Command {
     const program: Command = new Command()
     program
         .version(version)
+        .option('--help-all', 'Show full command tree')
         .addCommand(bump())
         .addCommand(confluence())
         .addCommand(jira())
         .addCommand(lab())
         .action(() => {
+            if (program.opts().helpAll) {
+                console.log(formatCommandTree(program))
+                return
+            }
             program.help()
         })
     return program
