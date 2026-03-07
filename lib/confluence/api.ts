@@ -78,6 +78,36 @@ export async function confluenceApiWrite(endpoint: string, method: string, body:
     return result
 }
 
+export async function confluenceSearch(cql: string): Promise<JSONValue> {
+    const { host, token } = await getConfluenceConfig()
+    const base = `https://${host}/wiki/rest/api`
+    const auth = `Basic ${token}`
+    const headers = new Headers()
+    headers.append('Authorization', auth)
+    headers.append('Accept', 'application/json')
+    const options = { method: 'GET', headers }
+    const origin = `https://${host}`
+
+    let uri = `${base}/search?cql=${encodeURIComponent(cql)}&limit=25`
+    let allResults: Array<JSONValue> = []
+
+    while (uri) {
+        const request = new Request(uri, options)
+        const response = await fetch(request)
+        const body = await response.json() as JSONValue & {
+            results?: Array<JSONValue>
+            _links?: { next?: string }
+        }
+        if (body.results) {
+            allResults = allResults.concat(body.results)
+        }
+        const next = body._links?.next
+        uri = next ? (next.startsWith('/') ? `${origin}${next}` : next) : ''
+    }
+
+    return allResults
+}
+
 export async function confluenceApiV1(endpoint: string): Promise<JSONValue> {
     if (endpoint.startsWith('/')) {
         console.warn(`confluenceApiV1: endpoint ${endpoint} starts with /, removing it`)

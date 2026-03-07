@@ -17,6 +17,22 @@ export type Space = JSONValue & {
     status: string
 }
 
+export type SearchResult = JSONValue & {
+    content: {
+        id: string
+        type: string
+        status: string
+        title: string
+    }
+    title: string
+    excerpt: string
+    url: string
+    resultGlobalContainer: {
+        title: string
+        displayUrl: string
+    }
+}
+
 export type Page = JSONValue & {
     id: string
     status: string

@@ -27,9 +27,15 @@ git confluence space list -v   # Verbose: full API response
 ### Pages
 
 ```sh
-# Search for pages by title (exact match)
-git confluence page search "Page Title"
+# Search for pages by title (fuzzy match, default)
+git confluence page search "query"
 # Output: id<TAB>title<TAB>url (one per line)
+
+# Search with exact title match (uses v2 API)
+git confluence page search "Exact Page Title" --exact
+
+# Full-text search (searches page body content too)
+git confluence page search "query" --full-text
 
 # Show page metadata
 git confluence page show <id>
@@ -158,7 +164,8 @@ Common macros: `code`, `info`, `note`, `warning`, `tip`, `expand`, `toc`,
 - **Version conflicts**: the update command auto-increments the version number.
   If another user updates the page between your read and write, the update will fail
   with a version conflict. Re-read and retry in that case.
-- **The search command does exact title matching**, not full-text search.
-  The query is passed as the `title` parameter to the Confluence v2 pages API.
+- **Search is fuzzy by default**: uses CQL `title ~ "query"` via the v1 search API.
+  Use `--exact` for exact title matching via the v2 pages API.
+  Use `--full-text` to also search page body content (`text ~ "query"`).
 - **All commands support `-v` / `--verbose`** for full API response output.
 - **Page IDs are numeric strings** (e.g., `"36306946"`).
