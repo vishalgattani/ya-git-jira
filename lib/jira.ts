@@ -62,7 +62,7 @@ type Myself = JSONValue & {
 }
 
 export async function getMyself(): Promise<Myself> {
-    return await jiraApi("/myself") as Myself
+    return await jiraApi("myself") as Myself
 }
 
 type SearchResponse = JSONValue & {
@@ -73,6 +73,6 @@ export async function myUnresolvedIssues(): Promise<Array<Issue>> {
     const myself = await getMyself()
     const myselfId = myself.accountId
     const jql = `assignee = ${myselfId} AND resolution = Unresolved`
-    const issues = await jiraApi(`/search?jql=${encodeURIComponent(jql)}`) as SearchResponse
+    const issues = await jiraApi(`search/jql?jql=${encodeURIComponent(jql)}&fields=summary`) as SearchResponse
     return issues.issues
 }

@@ -6,6 +6,7 @@ import { isMain } from '../lib/is_main'
 import start from './git-jira-start'
 import issue from './git-jira-issue'
 import issues from './git-jira-issue-list'
+import whoami from './git-jira-whoami'
 const version = await getPackageVersion()
 
 export function create(): Command {
@@ -17,6 +18,7 @@ export function create(): Command {
         .addCommand(start())
         .addCommand(issue())
         .addCommand(issues())
+        .addCommand(whoami())
     return program
 }
 
