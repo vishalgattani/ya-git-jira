@@ -5,31 +5,38 @@ executable that `git` discovers automatically (e.g. `git jira start`, `git lab
 merge active`, `git confluence page search`). A unified `gitj` wrapper is also
 provided.
 
-## Requirements
-
-[Bun](https://bun.sh) (not Node.js) — or Docker if you prefer not to install Bun.
-
-```
-curl -fsSL https://bun.sh/install | bash
-```
-
 ## Install
 
-```
-npm install -g ya-git-jira   # or bun / yarn / pnpm
-```
+There are three ways to install. Options 1 and 2 require
+[Bun](https://bun.sh). Option 3 requires only Docker.
 
-### Docker (alternative)
-
-No bun required — just Docker:
+### Option 1: npm install (requires Bun)
 
 ```
+curl -fsSL https://bun.sh/install | bash   # install Bun first
+npm install -g ya-git-jira                  # or bun / yarn / pnpm
+```
+
+### Option 2: Clone and build (requires Bun)
+
+```
+git clone https://github.com/jimlloyd/ya-git-jira.git
+cd ya-git-jira
+bun install
+bun link
+```
+
+### Option 3: Clone and Docker (no Bun needed)
+
+```
+git clone https://github.com/jimlloyd/ya-git-jira.git
+cd ya-git-jira
 ./install-docker-gitj.sh
 ```
 
-This builds the Docker image and installs a `gitj` wrapper script into a bin
-directory on your PATH (e.g. `~/.local/bin`). Then use it like the native
-install: `gitj jira start BUG-42`.
+This builds a Docker image and installs a `gitj` wrapper script into a bin
+directory on your PATH (e.g. `~/.local/bin`). The wrapper transparently runs
+commands inside Docker, so usage is identical to a native install.
 
 ## Configuration
 
