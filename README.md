@@ -1,51 +1,89 @@
-# ya-git-jira - Yet Another Git Jira
+# ya-git-jira
 
-This package installs several scripts that are written to be
-usable as `git` extensions, i.e. sub-commands of the `git` command.
-The extensions faciliate workflow when using `git` for source control and `jira`
-for issue tracking. Other similar packages exist -- thus the "yet another"
-in the name.
+Git extensions for Jira, GitLab, and Confluence. Each command is a standalone
+executable that `git` discovers automatically (e.g. `git jira start`, `git lab
+merge active`, `git confluence page search`). A unified `gitj` wrapper is also
+provided.
 
-This package will likely evolve over time to include more workflow cases.
+## Requirements
 
-## gitj -- A test driver to use instead of `git <command>`
-
-It can be useful to run these commands as if they were being invoked through
-`git` but using a proxy for `git` than can only execute the commands in this
-package.
-
-For example, to see the available top level commands, run `gitj --help`:
+[Bun](https://bun.sh) (not Node.js):
 
 ```
-$ gitj help
-Usage: gitj [options] [command]
-
-Options:
-  -V, --version   output the version number
-  -h, --help      display help for command
-
-Commands:
-  bump [options]  Bump the version number in the current branch
-  jira [options]  Commands for working with Jira
-  lab [options]   Commands for working with GitLab
+curl -fsSL https://bun.sh/install | bash
 ```
 
-## Command hierarchy and naming conventions
+## Install
 
-The `git jira` and `git lab` commands are arranged in a hierarchy with a structure
-and naming conventions that are indended to make it easy to navigate the existing
-commands and to also make it relatively easy to decide where a new command should
-go into the hierarchy. The current hierarchy is:
+```
+npm install -g ya-git-jira   # or bun / yarn / pnpm
+```
+
+## Configuration
+
+All configuration is via `git config`. Use `--global` if the same settings apply
+across repositories.
+
+### Jira
+
+```
+git config jira.host yourcompany.atlassian.net
+git config jira.token "<api-token>"
+```
+
+Create an API token: <https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/>
+
+### GitLab
+
+```
+git config gitlab.host gitlab.com        # default if omitted
+git config gitlab.token "<api-token>"
+```
+
+Create a personal access token: <https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token>
+
+### Confluence
+
+```
+git config confluence.host yourcompany.atlassian.net
+git config confluence.token "<api-token>"
+```
+
+The token is an Atlassian API token (same kind as Jira).
+
+### Email address
+
+Commands fall back to `user.email` from git config. Override per-service if needed:
+
+```
+git config jira.user <email>
+git config gitlab.user <email>
+git config confluence.user <email>
+```
+
+## Command hierarchy
 
 ```
 gitj
-    bump
+    api                 authenticated REST request to any service
+    bump                bump the version suffix of the current branch
+    confluence
+        whoami
+        space
+            list
+        page
+            search
+            show
+            update
+    install-skills      install AI agent skills for a coding framework
     jira
+        whoami
+        start           create a topic branch from a Jira issue
         issue
             list
             show
-        start
     lab
+        whoami
         group
             list
         merge
@@ -57,113 +95,75 @@ gitj
             list
         project
             list
-            pipeline
+            mr
                 list
+            pipeline
+                jobs
+                latest
+                list
+                log
             whereami
-    whoami
 ```
 
-The pattern `<command> list | show` that is used for `issue` will probably become
-a common pattern everywhere that `list` appears above. The subcommand `list` implies
-that multiple items are return, whereas `show` implies seeing the details for a single item.
+Every leaf command supports `--help`. Run `gitj --help-all` to print the full
+tree with descriptions.
 
-The `merge` subcommands `active` vs `todo` are both commands that result in a list.
-We might refactor them to instead be `list --active` and `list --todo` which would
-be more consistent.
+## Noteworthy commands
 
-The `git jira start` command might more logically be `git jira issue start`
-but `start` implies *issue* and it is expected to be one of the most commonly
-executed commands so we elevate it the hierarchy.
-
-## git-jira-start -- Create a new topic branch for work on an issue
-
-#### Usage:
-```bash
-$ git jira-start <issue>
-```
-
-#### Examples:
-```bash
-$ git jira-start BUG-0042
-```
-
-The command retrieves the summary line for the issue and converts it to
-a suitable branch name using the kebab-case-convention. If BUG-0042 had
-the summary "fix the thing" then the branch name will be `BUG-0042-fix-the-thing`.
-
-The command does not (yet) change the status of the issue.
-
-## git-bump -- Create a new branch based on the current branch
-
-Usage:
-```bash
-$ git bump
-```
-
-This command is not specific to Jira. It simply reads the current branch name and creates a new branch with the version bumped, i.e. incremented.
-
-Assume the current branch is `BUG-0042-fix-the-thing`.
-Executing the bump command once will create a new branch named `BUG-0042-fix-the-thing.v1`. If you execute the bump command again it will
-create a branch `BUG-0042-fix-the-thing.v2`.
-
-The `git bump` command will work whatever the current branch name is.
-It just checks to see if the current branch already ends with `.v`<*num*>,
-in which case it increments *num* but otherwise leaves the branch name as is.
-If the current branch does not end with `.v`<*num*> then it simply appends the
-suffix `.v1`.
-
-##  Bun required
-
-This package uses [bun](https://bun.sh) instead of [node](https://nodejs.org/en).
-You must install it before you install this package.
+### git jira start
 
 ```
-$ curl -fsSL https://bun.sh/install | bash
+git jira start BUG-42
 ```
 
-## Install with any npm-compatible package manager
+Fetches the issue summary from Jira, converts it to kebab-case, and creates a
+branch like `BUG-42-fix-the-thing`.
 
-You can install ya-git-jira via `npm`, or `yarn` or `pnpm` or `bun`.
-
-```
-$ npm install -g ya-git-jira
-```
-
-## Configuration
-
-All configuration is via `git config` settings. If your company has multiple
-repositories that all using Jira issue tracking then you probably want to use
-the global config by adding the `--global` option to the commands below.
-
-### Jira
-
-The `git jira` comands require your Jira `host` and `token`. The `host` is your Jira cloud service (usually `yourcompany.atlassian.net`).
-To create an API token follow the instructions [here](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/).
+### git bump
 
 ```
-$ git config jira.host yourcompany.atlassian.net
-$ git config jira.token "<long token here>"
+git bump
 ```
 
-### GitLab
+Appends or increments a `.vN` suffix on the current branch name:
+`BUG-42-fix-the-thing` -> `.v1` -> `.v2` -> ...
 
-Likewise the `git lab` comands require your GitLab `host` and `token`, though the default `host` `gitlab.com` will be sufficient
-for many users. To create an API token follow the instructions [here](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token)
-
-```
-$ git config gitlab.host gitlab.com
-$ git config gitlab.token "<long token here>"
-```
-
-### Email address
-
-Both `git lab` and `git jira` also need the email address associated associated with those accounts.
-Since `git` itself requires an email addres via the setting `user.email`, it is a reasonable default setting
-that will work for many users. But if necessary, you can specify the different email addresses
-using these two settings:
-
+### git api
 
 ```
-$ git config jira.user <email-address>
-$ git config gitlab.user <email-address>
+git api jira /rest/api/3/myself
+git api gitlab /api/v4/user
+git api confluence /wiki/api/v2/spaces
+```
+
+Make arbitrary authenticated REST calls to any configured service. Useful for
+one-off queries and scripting.
+
+### gitj install-skills
+
+```
+gitj install-skills opencode       # symlinks to ~/.config/opencode/skills/
+gitj install-skills copilot        # symlinks to ~/.copilot/skills/
+gitj install-skills claude         # symlinks to .claude/skills/ (project-level)
+gitj install-skills opencode --copy   # copy instead of symlink
+gitj install-skills opencode --force  # overwrite existing directories
+```
+
+Installs AI agent skill files (`git-jira`, `git-lab`, `git-confluence`) so that
+coding assistants (OpenCode, GitHub Copilot, Claude Code) know how to use these
+tools.
+
+## AI agent skills
+
+The `.opencode/skills/` directory contains concise skill files for AI coding
+agents. These tell agents that the tools exist, how auth works, and key workflow
+patterns. Install them with `gitj install-skills <framework>`.
+
+## Development
+
+```
+bun install          # install dependencies
+bun run build        # build to dist/
+bun test             # run all tests
+bunx tsc --noEmit    # type check
 ```
