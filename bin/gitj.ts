@@ -11,6 +11,7 @@ import { getPackageVersion } from '../lib/package'
 import api from './git-api'
 import bump from './git-bump'
 import confluence from './git-confluence'
+import installSkills from './gitj-install-skills'
 import jira from './git-jira'
 import lab from './git-lab'
 const version = await getPackageVersion()
@@ -23,6 +24,7 @@ export function create(): Command {
         .addCommand(api())
         .addCommand(bump())
         .addCommand(confluence())
+        .addCommand(installSkills())
         .addCommand(jira())
         .addCommand(lab())
         .action(() => {

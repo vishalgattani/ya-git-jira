@@ -42,7 +42,8 @@
     "git-lab-project": "dist/bin/git-lab-project.js",
     "git-lab-whoami": "dist/bin/git-lab-whoami.js",
     "git-lab": "dist/bin/git-lab.js",
-    "gitj": "dist/bin/gitj.js"
+    "gitj": "dist/bin/gitj.js",
+    "gitj-install-skills": "dist/bin/gitj-install-skills.js"
   },
   "scripts": {
     "preinstall": "bun run build.ts",

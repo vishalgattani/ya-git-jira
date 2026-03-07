@@ -15,7 +15,12 @@ describe('bin scripts', () => {
 
     describe('--help', () => {
         scripts.forEach((script) => {
-            const stem = script.split('/').pop()?.split('-').pop()?.split('.').shift();
+            // Strip .ts, then remove the git-{service}- or gitj- prefix to get the command name.
+            // e.g. "git-jira-start" -> "start", "gitj-install-skills" -> "install-skills", "gitj" -> "gitj"
+            const base = script.replace(/\.ts$/, '')
+            const stem = base.startsWith('gitj-') ? base.slice('gitj-'.length)
+                : base === 'gitj' ? 'gitj'
+                : base.split('-').pop()!
             test(`"${script} --help" should contain 'Usage: ${stem}'"`, async () => {
                 const output = await doCommand(['bun', 'run', `${binDir}/${script}`, '--help']);
                 expect(output).toContain(`Usage: ${stem}`);
