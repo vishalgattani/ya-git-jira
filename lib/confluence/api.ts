@@ -50,6 +50,34 @@ export async function confluenceApi(endpoint: string): Promise<JSONValue> {
     return result
 }
 
+export async function confluenceApiWrite(endpoint: string, method: string, body: JSONValue): Promise<JSONValue> {
+    if (endpoint.startsWith('/')) {
+        console.warn(`confluenceApiWrite: endpoint ${endpoint} starts with /, removing it`)
+        endpoint = endpoint.slice(1)
+    }
+    const { host, token } = await getConfluenceConfig()
+    const base = `https://${host}/wiki/api/v2`
+    const uri = `${base}/${endpoint}`
+    const auth = `Basic ${token}`
+    const headers = new Headers()
+    headers.append('Authorization', auth)
+    headers.append('Accept', 'application/json')
+    headers.append('Content-Type', 'application/json')
+    const options = {
+        method,
+        headers,
+        body: JSON.stringify(body),
+    }
+    const request = new Request(uri, options)
+    const response = await fetch(request)
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(`Confluence API ${method} ${endpoint} failed (${response.status}): ${text}`)
+    }
+    const result = await response.json()
+    return result
+}
+
 export async function confluenceApiV1(endpoint: string): Promise<JSONValue> {
     if (endpoint.startsWith('/')) {
         console.warn(`confluenceApiV1: endpoint ${endpoint} starts with /, removing it`)

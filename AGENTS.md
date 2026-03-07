@@ -38,9 +38,11 @@ Short, lowercase, descriptive phrases without conventional-commit prefixes:
 | `lib/is_main.ts` | isMain() helper for dual import/run files |
 | `lib/package.ts` | package.json reading and version extraction |
 | `lib/gitlab/` | GitLab API client (api, config, groups, MRs, pipelines, etc.) |
+| `lib/confluence/` | Confluence API client (api, config, types) |
 | `bin/gitj.ts` | Root CLI entry point aggregating all subcommands |
 
 ## Skills
 
 Load the `code-style` skill before writing or editing TypeScript code.
 Load the `architecture` skill when you need to understand CLI design patterns, project structure, or test conventions.
+Load the `confluence` skill when working with Confluence pages (searching, reading, or updating content).

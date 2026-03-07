@@ -30,4 +30,14 @@ export type Page = JSONValue & {
         message: string
         createdAt: string
     }
+    body?: {
+        storage?: {
+            representation: string
+            value: string
+        }
+        atlas_doc_format?: {
+            representation: string
+            value: string
+        }
+    }
 }

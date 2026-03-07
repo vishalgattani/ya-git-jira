@@ -8,6 +8,7 @@
     "git-bump": "dist/bin/git-bump.js",
     "git-confluence-page-search": "dist/bin/git-confluence-page-search.js",
     "git-confluence-page-show": "dist/bin/git-confluence-page-show.js",
+    "git-confluence-page-update": "dist/bin/git-confluence-page-update.js",
     "git-confluence-page": "dist/bin/git-confluence-page.js",
     "git-confluence-space-list": "dist/bin/git-confluence-space-list.js",
     "git-confluence-space": "dist/bin/git-confluence-space.js",
