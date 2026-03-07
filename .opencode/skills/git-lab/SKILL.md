@@ -1,5 +1,5 @@
 ---
-name: gitlab
+name: git-lab
 description: Using git lab commands to work with GitLab projects, merge requests, and pipelines
 ---
 

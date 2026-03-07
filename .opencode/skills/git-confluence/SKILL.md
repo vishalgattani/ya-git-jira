@@ -1,5 +1,5 @@
 ---
-name: confluence
+name: git-confluence
 description: Using git confluence commands to search, read, and update Confluence pages
 ---
 

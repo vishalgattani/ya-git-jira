@@ -1,5 +1,5 @@
 ---
-name: jira
+name: git-jira
 description: Using git jira commands to work with Jira issues and branches
 ---
 

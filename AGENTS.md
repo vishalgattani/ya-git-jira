@@ -45,6 +45,6 @@ Short, lowercase, descriptive phrases without conventional-commit prefixes:
 
 Load the `code-style` skill before writing or editing TypeScript code.
 Load the `architecture` skill when you need to understand CLI design patterns, project structure, or test conventions.
-Load the `confluence` skill when working with Confluence pages (searching, reading, or updating content).
-Load the `jira` skill when working with Jira issues or the `git jira` commands.
-Load the `gitlab` skill when working with GitLab projects, merge requests, or the `git lab` commands.
+Load the `git-confluence` skill when working with Confluence pages (searching, reading, or updating content).
+Load the `git-jira` skill when working with Jira issues or the `git jira` commands.
+Load the `git-lab` skill when working with GitLab projects, merge requests, or the `git lab` commands.
