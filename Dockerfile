@@ -7,13 +7,15 @@
 #
 # Usage:
 #   docker run --rm \
-#     -v "$HOME/.gitconfig:/root/.gitconfig:ro" \
+#     --user "$(id -u):$(id -g)" \
+#     -e HOME="$HOME" \
+#     -v "$HOME:$HOME" \
 #     -v "$(pwd):$(pwd)" -w "$(pwd)" \
 #     gitj <command> [args...]
 #
 # Examples:
-#   docker run --rm -v "$HOME/.gitconfig:/root/.gitconfig:ro" -v "$(pwd):$(pwd)" -w "$(pwd)" gitj jira start
-#   docker run --rm -v "$HOME/.gitconfig:/root/.gitconfig:ro" -v "$(pwd):$(pwd)" -w "$(pwd)" gitj lab merge active
+#   docker run --rm --user "$(id -u):$(id -g)" -e HOME="$HOME" -v "$HOME:$HOME" -v "$(pwd):$(pwd)" -w "$(pwd)" gitj jira start
+#   docker run --rm --user "$(id -u):$(id -g)" -e HOME="$HOME" -v "$HOME:$HOME" -v "$(pwd):$(pwd)" -w "$(pwd)" gitj lab merge active
 
 FROM oven/bun:1 AS builder
 
@@ -42,6 +44,9 @@ WORKDIR /app
 COPY --from=builder /build/dist/ dist/
 COPY --from=builder /build/node_modules/ node_modules/
 COPY package.json ./
+
+# Include skill files so install-skills can copy them into projects
+COPY .opencode/skills/ .opencode/skills/
 
 # Symlink all bin entries onto PATH
 RUN mkdir -p /usr/local/bin && \

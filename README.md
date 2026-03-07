@@ -154,16 +154,16 @@ one-off queries and scripting.
 ### gitj install-skills
 
 ```
-gitj install-skills opencode       # symlinks to ~/.config/opencode/skills/
-gitj install-skills copilot        # symlinks to ~/.copilot/skills/
-gitj install-skills claude         # symlinks to .claude/skills/ (project-level)
-gitj install-skills opencode --copy   # copy instead of symlink
+gitj install-skills opencode       # copies to .opencode/skills/
+gitj install-skills copilot        # copies to .github/skills/
+gitj install-skills claude         # copies to .claude/skills/
 gitj install-skills opencode --force  # overwrite existing directories
 ```
 
-Installs AI agent skill files (`git-jira`, `git-lab`, `git-confluence`) so that
-coding assistants (OpenCode, GitHub Copilot, Claude Code) know how to use these
-tools.
+Skills are installed into the current project directory. Run this from your
+project root so that your AI coding assistant discovers the skill files. When
+running via Docker, files are always copied (symlinks would point into the
+container).
 
 ## AI agent skills
 

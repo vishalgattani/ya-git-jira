@@ -59,7 +59,9 @@ WRAPPER="$BIN_DIR/$WRAPPER_NAME"
 cat > "$WRAPPER" << 'SCRIPT'
 #!/usr/bin/env bash
 exec docker run --rm \
-  -v "$HOME/.gitconfig:/root/.gitconfig:ro" \
+  --user "$(id -u):$(id -g)" \
+  -e HOME="$HOME" \
+  -v "$HOME:$HOME" \
   -v "$(pwd):$(pwd)" -w "$(pwd)" \
   gitj "$@"
 SCRIPT

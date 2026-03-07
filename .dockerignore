@@ -2,5 +2,7 @@ node_modules
 dist
 .git
 *.tsbuildinfo
-.opencode
 tests
+# Exclude .opencode except skills/ (needed by install-skills)
+.opencode/*
+!.opencode/skills
