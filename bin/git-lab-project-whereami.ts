@@ -27,7 +27,7 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(project)
+                console.log(JSON.stringify(project, null, 2))
             } else {
                 const { id, name, path_with_namespace, ssh_url_to_repo } = project
                 console.log({id, name, path_with_namespace, ssh_url_to_repo })

@@ -15,7 +15,7 @@ export function create(): Command {
         .description('List namespaces for the current user')
         .action(async () => {
             const namespaces = await getNamespaces()
-            console.log(namespaces)
+            console.log(JSON.stringify(namespaces, null, 2))
         })
     return program
 }

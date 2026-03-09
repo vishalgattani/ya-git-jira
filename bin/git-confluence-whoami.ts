@@ -17,7 +17,7 @@ export function create(): Command {
         .action(async (options) => {
             const myself = await confluenceApiV1('user/current') as ConfluenceUser
             if (options.verbose) {
-                console.log(myself)
+                console.log(JSON.stringify(myself, null, 2))
             } else {
                 const { displayName, email, accountId } = myself
                 console.log({ displayName, email, accountId })

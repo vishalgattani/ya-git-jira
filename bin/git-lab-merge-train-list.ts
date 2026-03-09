@@ -14,7 +14,7 @@ export function create(): Command {
         .description('List merge trains for the current project')
         .action(async () => {
             const trains = await getMergeTrains()
-            console.log(trains)
+            console.log(JSON.stringify(trains, null, 2))
         })
     return program
 }

@@ -37,14 +37,14 @@ export function create(): Command {
                 process.exit(0)
             }
             if (options.verbose) {
-                console.log(mrs)
+                console.log(JSON.stringify(mrs, null, 2))
             }
             else {
                 const filtered = mrs.map(m => {
                     const { iid, title, web_url, source_branch, target_branch, state, draft } = m
                     return { iid, title, web_url, source_branch, target_branch, state, draft }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

@@ -16,13 +16,13 @@ export function create(): Command {
         .action(async (options) => {
             const groups = await getGroups()
             if (options.verbose)
-                console.log(groups)
+                console.log(JSON.stringify(groups, null, 2))
             else {
                 const filtered = groups.map(g => {
                     const { id, name, full_path } = g
                     return { id, name, full_path }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

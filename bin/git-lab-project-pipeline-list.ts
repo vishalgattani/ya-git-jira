@@ -26,14 +26,14 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(pipelines)
+                console.log(JSON.stringify(pipelines, null, 2))
             }
             else {
                 let filtered = pipelines.map((p: Pipeline) => {
                     const { id, web_url, updated_at, ref, sha } = p
                     return { id, web_url, updated_at, ref, sha }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

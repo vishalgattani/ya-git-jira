@@ -21,14 +21,14 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(projects)
+                console.log(JSON.stringify(projects, null, 2))
             }
             else {
                 let filtered = projects.map((p: Project) => {
                     const { id, name, path_with_namespace, ssh_url_to_repo } = p
                     return { id, name, path_with_namespace, ssh_url_to_repo }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program
