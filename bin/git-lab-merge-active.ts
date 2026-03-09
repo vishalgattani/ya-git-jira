@@ -20,7 +20,7 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(merges)
+                console.log(JSON.stringify(merges, null, 2))
                 process.exit(0)
             }
             else {
@@ -28,7 +28,7 @@ export function create(): Command {
                     const { title, web_url, source_branch, target_branch } = m
                     return { title, web_url, source_branch, target_branch }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

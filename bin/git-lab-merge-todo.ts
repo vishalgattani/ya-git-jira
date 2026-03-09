@@ -16,14 +16,14 @@ export function create(): Command {
         .action(async (options) => {
             const mrs: MergeRequest[] = await getMyMergeRequestsToReview()
             if (options.verbose) {
-                console.log(mrs)
+                console.log(JSON.stringify(mrs, null, 2))
             }
             else {
                 const filtered = mrs.map(mr => {
                     const { title, web_url, source_branch, target_branch } = mr
                     return { title, web_url, source_branch, target_branch }
                 })
-                console.log(filtered)
+                console.log(JSON.stringify(filtered, null, 2))
             }
         })
     return program

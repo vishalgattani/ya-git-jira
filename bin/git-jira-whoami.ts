@@ -16,7 +16,7 @@ export function create(): Command {
         .action(async (options) => {
             const myself = await getMyself()
             if (options.verbose) {
-                console.log(myself)
+                console.log(JSON.stringify(myself, null, 2))
             } else {
                 const { displayName, emailAddress, accountId } = myself as any
                 console.log({ displayName, emailAddress, accountId })

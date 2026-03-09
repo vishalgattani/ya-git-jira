@@ -22,7 +22,7 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(issue)
+                console.log(JSON.stringify(issue, null, 2))
             } else {
                 const { host } = await getJiraConfig()
                 const summary = issue.fields.summary

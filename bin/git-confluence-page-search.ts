@@ -24,7 +24,7 @@ export function create(): Command {
             if (options.exact) {
                 const pages = await confluenceApi(`pages?title=${encodeURIComponent(query)}`) as Array<Page>
                 if (options.verbose) {
-                    console.log(pages)
+                    console.log(JSON.stringify(pages, null, 2))
                 } else {
                     for (const page of pages) {
                         const url = `https://${host}/wiki/spaces/${page.spaceId}/pages/${page.id}`
@@ -38,7 +38,7 @@ export function create(): Command {
             const cql = `type=page AND ${field} ~ "${query}"`
             const results = await confluenceSearch(cql) as Array<SearchResult>
             if (options.verbose) {
-                console.log(results)
+                console.log(JSON.stringify(results, null, 2))
             } else {
                 for (const result of results) {
                     const id = result.content.id

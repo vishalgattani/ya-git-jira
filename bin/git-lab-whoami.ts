@@ -20,7 +20,7 @@ export function create(): Command {
                 process.exit(1)
             }
             if (options.verbose) {
-                console.log(user)
+                console.log(JSON.stringify(user, null, 2))
                 process.exit(0)
             }
             else {

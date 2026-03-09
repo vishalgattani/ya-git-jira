@@ -17,7 +17,7 @@ export function create(): Command {
         .action(async (options) => {
             const spaces = await confluenceApi('spaces') as Array<Space>
             if (options.verbose) {
-                console.log(spaces)
+                console.log(JSON.stringify(spaces, null, 2))
             } else {
                 for (const space of spaces) {
                     console.log(`${space.key}\t${space.name}`)

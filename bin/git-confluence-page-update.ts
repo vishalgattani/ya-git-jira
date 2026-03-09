@@ -62,7 +62,7 @@ export function create(): Command {
 
             const result = await confluenceApiWrite(`pages/${id}`, 'PUT', body) as Page
             if (options.verbose) {
-                console.log(result)
+                console.log(JSON.stringify(result, null, 2))
             } else {
                 console.log(`Updated page ${result.id} "${result.title}" to version ${result.version.number}`)
             }

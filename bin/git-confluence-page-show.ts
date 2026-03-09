@@ -40,7 +40,7 @@ export function create(): Command {
                     process.exit(1)
                 }
             } else if (options.verbose) {
-                console.log(page)
+                console.log(JSON.stringify(page, null, 2))
             } else {
                 const { host } = await getConfluenceConfig()
                 const url = `https://${host}/wiki/spaces/${page.spaceId}/pages/${page.id}`
