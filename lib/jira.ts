@@ -48,6 +48,10 @@ export async function jiraApi(endpoint: string): Promise<JSONValue> {
     }
     const request = new Request(uri, options)
     const response = await fetch(request)
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(`Jira API ${endpoint} failed (${response.status}): ${text}`)
+    }
     const result = await response.json()
     return result;
 }

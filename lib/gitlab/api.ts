@@ -31,6 +31,10 @@ export async function gitlabApi(endpoint: string): Promise<JSONValue> {
     }
     let request = new Request(uri, options)
     const response = await fetch(request)
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(`GitLab API ${endpoint} failed (${response.status}): ${text}`)
+    }
     let link = getNextLink(response.headers.get('Link'))
     let partial = (await response.json()) as Array<JSONValue>
     let result: Array<JSONValue> = partial

@@ -30,6 +30,10 @@ export async function confluenceApi(endpoint: string): Promise<JSONValue> {
     }
     let request = new Request(uri, options)
     const response = await fetch(request)
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(`Confluence API ${endpoint} failed (${response.status}): ${text}`)
+    }
     let link = getNextLink(response.headers.get('Link'))
     const body = await response.json() as JSONValue & { results?: Array<JSONValue> }
     if (!body.results) {
@@ -94,6 +98,10 @@ export async function confluenceSearch(cql: string): Promise<JSONValue> {
     while (uri) {
         const request = new Request(uri, options)
         const response = await fetch(request)
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(`Confluence search failed (${response.status}): ${text}`)
+        }
         const body = await response.json() as JSONValue & {
             results?: Array<JSONValue>
             _links?: { next?: string }
@@ -127,6 +135,10 @@ export async function confluenceApiV1(endpoint: string): Promise<JSONValue> {
     }
     const request = new Request(uri, options)
     const response = await fetch(request)
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(`Confluence API v1 ${endpoint} failed (${response.status}): ${text}`)
+    }
     const result = await response.json()
     return result
 }
