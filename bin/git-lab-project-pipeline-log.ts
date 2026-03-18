@@ -3,7 +3,7 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { getJobLog } from '../lib/gitlab'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 
 const version = await getPackageVersion()
 
@@ -44,6 +44,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-project-pipeline-log')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-project-pipeline-log', create)

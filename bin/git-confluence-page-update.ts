@@ -5,7 +5,7 @@ import { getPackageVersion } from '../lib/package'
 import { confluenceApi, confluenceApiWrite } from '../lib/confluence'
 import type { Page } from '../lib/confluence'
 import type { JSONValue } from '../lib/json'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 async function readStdin(): Promise<string> {
@@ -72,6 +72,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-confluence-page-update')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-confluence-page-update', create)

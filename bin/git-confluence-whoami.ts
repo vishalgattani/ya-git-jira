@@ -4,7 +4,7 @@ import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { confluenceApiV1 } from '../lib/confluence'
 import type { ConfluenceUser } from '../lib/confluence'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 export function create(): Command {
@@ -28,6 +28,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-confluence-whoami')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-confluence-whoami', create)

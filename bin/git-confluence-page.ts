@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import search from './git-confluence-page-search'
 import show from './git-confluence-page-show'
 import update from './git-confluence-page-update'
@@ -23,6 +23,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-confluence-page')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-confluence-page', create)

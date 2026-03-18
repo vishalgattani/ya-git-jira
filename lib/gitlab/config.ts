@@ -14,7 +14,7 @@ const tokenP = getConfig("gitlab.token")
 export async function getGitlabConfig(): Promise<GitlabConfig> {
     const host = await hostP || 'gitlab.com'
     const user = await gitEmailP || await gitlabEmailP
-    if (!user) throw new Error("Neither user.email nor gitlab.email in git config")
+    if (!user) throw new Error("Neither user.email nor gitlab.user in git config")
     const token = await tokenP
     if (!token) throw new Error("gitlab.token not in git config")
     return { host, user, token }

@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import { getNamespaces } from '../lib/gitlab/namespace'
 
 const version = await getPackageVersion()
@@ -22,6 +22,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-namespace-list')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-namespace-list', create)

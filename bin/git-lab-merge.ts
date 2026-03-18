@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import todo from './git-lab-merge-todo'
 import active from './git-lab-merge-active'
 import train from './git-lab-merge-train'
@@ -24,6 +24,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-merge')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-merge', create)

@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import jobs from './git-lab-project-pipeline-jobs'
 import latest from './git-lab-project-pipeline-latest'
 import list from './git-lab-project-pipeline-list'
@@ -25,6 +25,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-project-pipeline')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-project-pipeline', create)

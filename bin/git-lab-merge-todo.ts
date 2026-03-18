@@ -3,7 +3,7 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { getMyMergeRequestsToReview, type MergeRequest } from "../lib/gitlab"
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 export function create(): Command {
@@ -31,6 +31,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-merge-todo')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-merge-todo', create)

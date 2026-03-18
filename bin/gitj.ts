@@ -38,4 +38,9 @@ export function create(): Command {
 }
 
 const command = create()
-await command.parseAsync(Bun.argv)
+try {
+    await command.parseAsync(Bun.argv)
+} catch (err) {
+    console.error(`error: ${err instanceof Error ? err.message : String(err)}`)
+    process.exit(1)
+}

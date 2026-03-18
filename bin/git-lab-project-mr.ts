@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import list from './git-lab-project-mr-list'
 const version = await getPackageVersion()
 
@@ -19,6 +19,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-project-mr')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-project-mr', create)

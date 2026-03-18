@@ -3,7 +3,7 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { findPackageJson } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -126,6 +126,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('gitj-install-skills')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('gitj-install-skills', create)
