@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import groups from './git-lab-group'
 import merges from './git-lab-merge'
 import namespaces from './git-lab-namespace'
@@ -22,11 +22,18 @@ export function create(): Command {
         .addCommand(projects())
         .addCommand(whoami())
         .action(() => program.help())
+        .addHelpText('after', `
+Required git config:
+  gitlab.token   your GitLab personal access token
+
+Optional git config:
+  gitlab.host    your GitLab hostname (defaults to gitlab.com)
+  gitlab.user    your GitLab email (falls back to user.email)
+
+Set with: git config --global gitlab.token <value>`)
     return program
 }
 
 export default create
 
-if (isMain('git-lab')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab', create)

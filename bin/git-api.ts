@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import { apiRequest, apiPaginate, serviceNames } from '../lib/api.ts'
 
 const version = await getPackageVersion()
@@ -65,6 +65,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-api')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-api', create)

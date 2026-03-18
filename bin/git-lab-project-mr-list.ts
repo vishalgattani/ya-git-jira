@@ -5,7 +5,7 @@ import { getPackageVersion } from '../lib/package'
 import { getMergeRequestsByBranch, type MergeRequest } from "../lib/gitlab"
 import { findProject } from '../lib/gitlab/project'
 import { getRemote, getCurrentBranch } from '../lib/git'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 export function create(): Command {
@@ -52,6 +52,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-project-mr-list')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-project-mr-list', create)

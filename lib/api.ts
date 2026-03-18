@@ -82,6 +82,18 @@ export async function apiRequest(
 
     const request = new Request(url, fetchOptions)
     const response = await fetch(request)
+
+    if (!response.ok) {
+        const text = await response.text()
+        let body: JSONValue
+        try {
+            body = JSON.parse(text) as JSONValue
+        } catch {
+            throw new Error(`${serviceName} API ${method} ${endpoint} failed (${response.status}): ${text}`)
+        }
+        return { status: response.status, headers: response.headers, body }
+    }
+
     const body = await response.json() as JSONValue
 
     return {
@@ -138,7 +150,13 @@ export async function apiPaginate(
         lastHeaders = response.headers
 
         if (!response.ok) {
-            const body = await response.json() as JSONValue
+            const text = await response.text()
+            let body: JSONValue
+            try {
+                body = JSON.parse(text) as JSONValue
+            } catch {
+                throw new Error(`${serviceName} API paginate ${endpoint} failed (${response.status}): ${text}`)
+            }
             return { status: response.status, headers: response.headers, body }
         }
 

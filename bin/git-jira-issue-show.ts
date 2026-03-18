@@ -3,7 +3,7 @@
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { getIssue } from "../lib/jira"
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 import { getJiraConfig } from '../lib/jira'
 const version = await getPackageVersion()
 
@@ -35,6 +35,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-jira-issue-show')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-jira-issue-show', create)

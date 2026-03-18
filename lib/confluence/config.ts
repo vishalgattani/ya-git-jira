@@ -15,11 +15,11 @@ const confluenceTokenP = getConfig('confluence.token', { expectQuiet: true })
 
 export async function getConfluenceConfig(): Promise<ConfluenceConfig> {
     const host = await confluenceHostP || await jiraHostP
-    if (!host) throw new Error('confluence.host or jira.host not in git config')
+    if (!host) throw new Error('confluence.host or jira.host not in git config (see: gitj confluence --help)')
     const user = await confluenceEmailP || await jiraEmailP || await gitEmailP
-    if (!user) throw new Error('confluence.user, jira.user, or user.email not in git config')
+    if (!user) throw new Error('confluence.user, jira.user, or user.email not in git config (see: gitj confluence --help)')
     const pat = await confluenceTokenP || await jiraTokenP
-    if (!pat) throw new Error('confluence.token or jira.token not in git config')
+    if (!pat) throw new Error('confluence.token or jira.token not in git config (see: gitj confluence --help)')
     const token = Buffer.from(`${user}:${pat}`).toString('base64')
     return { host, token }
 }

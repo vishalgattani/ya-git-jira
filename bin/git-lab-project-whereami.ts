@@ -4,7 +4,7 @@ import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { findProject } from "../lib/gitlab/project"
 import { getRemote } from '../lib/git'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 export function create(): Command {
@@ -38,6 +38,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-project-whereami')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-project-whereami', create)

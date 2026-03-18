@@ -1,4 +1,5 @@
 import path from 'node:path'
+import type { Command } from 'commander'
 
 function justBase(filename: string): string {
     const ext = path.extname(filename)
@@ -21,4 +22,14 @@ export function isMain(self: string): boolean {
     //     })
     // }
     return result
+}
+
+export async function runMain(self: string, create: () => Command): Promise<void> {
+    if (!isMain(self)) return
+    try {
+        await create().parseAsync(Bun.argv)
+    } catch (err) {
+        console.error(`error: ${err instanceof Error ? err.message : String(err)}`)
+        process.exit(1)
+    }
 }

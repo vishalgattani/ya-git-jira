@@ -2,7 +2,7 @@
 
 import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 import list from './git-lab-merge-train-list'
@@ -20,6 +20,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-lab-merge-train')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-lab-merge-train', create)

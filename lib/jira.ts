@@ -21,11 +21,11 @@ const tokenP = getConfig("jira.token")
 
 export async function getJiraConfig(): Promise<JiraConfig> {
     const host = await hostP
-    if (!host) throw new Error("jira.host not in git config")
+    if (!host) throw new Error("jira.host not in git config (see: gitj jira --help)")
     const user = await jiraEmailP || await gitEmailP
-    if (!user) throw new Error("jira.user or user.email not in git config")
+    if (!user) throw new Error("jira.user or user.email not in git config (see: gitj jira --help)")
     const pat = await tokenP
-    if (!pat) throw new Error("jira.token not in git config")
+    if (!pat) throw new Error("jira.token not in git config (see: gitj jira --help)")
     const token = Buffer.from(`${user}:${pat}`).toString('base64')
     return { host, token }
 }
@@ -48,6 +48,10 @@ export async function jiraApi(endpoint: string): Promise<JSONValue> {
     }
     const request = new Request(uri, options)
     const response = await fetch(request)
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(`Jira API ${endpoint} failed (${response.status}): ${text}`)
+    }
     const result = await response.json()
     return result;
 }

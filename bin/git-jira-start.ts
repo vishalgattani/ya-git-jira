@@ -4,7 +4,7 @@ import { Command } from 'commander'
 import { getPackageVersion } from '../lib/package'
 import { createBranch } from "../lib/git"
 import { getIssue } from "../lib/jira"
-import { isMain } from '../lib/is_main'
+import { runMain } from '../lib/is_main'
 const version = await getPackageVersion()
 
 function toKebab(s: string): string {
@@ -37,6 +37,4 @@ export function create(): Command {
 
 export default create
 
-if (isMain('git-jira-start')) {
-    await create().parseAsync(Bun.argv)
-}
+await runMain('git-jira-start', create)
