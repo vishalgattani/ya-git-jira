@@ -19,6 +19,15 @@ export function create(): Command {
         .addCommand(issue())
         .addCommand(issues())
         .addCommand(whoami())
+        .addHelpText('after', `
+Required git config:
+  jira.host    your Jira hostname (e.g. yourcompany.atlassian.net)
+  jira.token   your Atlassian API token
+
+Optional git config:
+  jira.user    your Jira email (falls back to user.email)
+
+Set with: git config --global jira.host <value>`)
     return program
 }
 
